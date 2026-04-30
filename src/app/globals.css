@@ -1,0 +1,130 @@
+/* ============================================
+   FONTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   TAILWIND V4 — must come after font imports
+   ============================================ */
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+@theme {
+  /* Typography */
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  /* Backgrounds */
+  --color-background: #050A15;
+  --color-surface: #0A1224;
+  --color-surface-hover: #101A33;
+
+  /* Borders */
+  --color-border: #1A2644;
+  --color-border-light: #24355E;
+
+  /* Text hierarchy */
+  --color-text-primary: #F0F4F8;
+  --color-text-secondary: #9BAECA;
+  --color-text-tertiary: #6B80A6;
+
+  /* Brand accents */
+  --color-accent: #203A8F;
+  --color-accent-light: #0085CA;
+  --color-accent-green: #50B848;
+
+  /* Border radius — intentionally flat/editorial */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.25rem;
+}
+
+/* ============================================
+   BASE / GLOBAL STYLES
+   ============================================ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar — webkit */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-light);
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+@layer utilities {
+  /* Override Tailwind's rounded-lg to use flat brand radius */
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+
+  /* Hide scrollbar for horizontal scroll elements */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Glassmorphism */
+  .glass-panel {
+    background: rgba(16, 26, 21, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-panel-light {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@layer utilities {
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-ticker {
+    animation: ticker 30s linear infinite;
+  }
+}
