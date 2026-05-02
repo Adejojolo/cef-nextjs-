@@ -9,6 +9,48 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } }
 };
 
+const partners = [
+  {
+    type: "logo",
+    name: "NSIA",
+    src: "https://nsia.com.ng/wp-content/uploads/2022/08/NSIA-Logo.svg"
+  },
+  {
+    type: "logo",
+    name: "InfraCredit",
+    src: "https://infracredit.ng/update/wp-content/uploads/2020/10/InfraCredit.svg",
+  },
+  {
+    type: "logo",
+    name: "Shelter Afrique",
+    src: "/assets/shelter afrique.svg",
+  },
+  {
+    type: "text",
+    name: "All On",
+  },
+  {
+    type: "logo",
+    name: "Climate Bonds",
+    src: "https://www.climatebonds.net/assets/images/cb-logo.svg",
+  },
+  {
+    type: "logo",
+    name: "FMDQ",
+    src: "https://fmdqgroup.com/wp-content/uploads/2021/11/FMDQ-LOGO-November-2020.svg",
+  },
+  {
+    type: "logo",
+    name: "USAID",
+    src: "/assets/USAID.svg",
+  },
+  {
+    type: "logo",
+    name: "UK NIAF",
+    src: "/assets/UKNIAF_Logo-1.svg",
+  },
+] as const;
+
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
@@ -37,11 +79,11 @@ const TextReveal = ({ text }: { text: string }) => {
   );
 };
 
-const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = false, image = null, accentColor = "var(--color-accent-green)", tooltipText, children, forceHover = false }: { 
-  icon: any, 
-  headline: string, 
-  statement?: string, 
-  proof?: string, 
+const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = false, image = null, accentColor = "var(--color-accent-green)", tooltipText, children, forceHover = false }: {
+  icon: any,
+  headline: string,
+  statement?: string,
+  proof?: string,
   tags?: string[],
   isWide?: boolean,
   image?: string | null,
@@ -50,16 +92,16 @@ const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = fals
   children?: React.ReactNode,
   forceHover?: boolean
 }) => (
-  <motion.div 
+  <motion.div
     variants={fadeUp}
     whileHover={{ y: -8 }}
     className={`relative overflow-hidden group transition-all duration-500 shadow-2xl rounded-lg border bg-[var(--color-surface)] border-blue-500/20 ${isWide ? "md:col-span-2" : "col-span-1"} h-full flex flex-col p-8`}
   >
     {image && (
       <div className={`absolute inset-0 z-0 transition-opacity duration-700 ${forceHover ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-        <img 
-          src={image} 
-          alt={headline} 
+        <img
+          src={image}
+          alt={headline}
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-1000 opacity-40 mix-blend-luminosity ${forceHover ? 'scale-105' : 'group-hover:scale-105'}`}
           referrerPolicy="no-referrer"
         />
@@ -67,14 +109,14 @@ const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = fals
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-background)] via-[var(--color-background)]/80 to-transparent" />
       </div>
     )}
-    
+
     <div className="relative z-10 flex flex-col h-full">
       {/* Visual Anchor */}
       <div className="relative w-max mb-8">
-        <div 
+        <div
           className={`w-12 h-12 rounded-lg flex items-center justify-center border transition-all duration-500 ${forceHover ? 'bg-[var(--color-accent-green)]/20 border-[var(--color-accent-green)]/30' : 'bg-[var(--color-accent-green)]/5 border-[var(--color-accent-green)]/10 group-hover:bg-[var(--color-accent-green)]/20 group-hover:border-[var(--color-accent-green)]/30'}`}
         >
-          <Icon 
+          <Icon
             className={`w-6 h-6 transition-all duration-500 text-[var(--color-accent-green)] ${forceHover ? 'scale-110' : 'group-hover:scale-110'}`}
           />
         </div>
@@ -96,7 +138,7 @@ const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = fals
       {(proof || tags) && (
         <div className="mt-12 flex items-center justify-between gap-4">
           {proof && (
-            <div 
+            <div
               className={`border px-5 py-2 rounded-full transition-all duration-500 bg-[var(--color-accent-green)]/10 border-[var(--color-accent-green)]/20 ${forceHover ? 'scale-105' : 'group-hover:scale-105'}`}
             >
               <span className="text-xs font-bold tracking-tight text-[var(--color-accent-green)]">
@@ -104,7 +146,7 @@ const FocusCard = ({ icon: Icon, headline, statement, proof, tags, isWide = fals
               </span>
             </div>
           )}
-          
+
           {tags && (
             <div className="flex gap-3">
               {tags.map(tag => (
@@ -141,22 +183,22 @@ const StickyCard = ({ item, i, isLast, setLastActive }: { key?: React.Key, item:
   return (
     <div className="relative">
       <div ref={triggerRef} className="absolute top-0 w-full h-px pointer-events-none" />
-      <div 
+      <div
         className={`sticky top-32 bg-white pt-8 pb-12 min-h-[30vh] flex flex-col justify-start overflow-hidden -mx-6 px-6 sm:mx-0 sm:px-8 transition-all duration-500 border border-slate-200 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-[var(--card-color)] ${isActive ? 'opacity-100' : 'opacity-[0.15]'}`}
-        style={{ 
+        style={{
           zIndex: i + 10,
           '--card-color': `rgba(${item.color}, 0.5)`
         } as React.CSSProperties}
       >
         {/* Gradient corner */}
-        <div 
+        <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-500"
           style={{ background: `radial-gradient(circle at top right, rgba(${item.color}, 0.15) 0%, transparent 60%)` }}
         />
 
         {/* Faded Background Icon */}
         {Icon && (
-          <div 
+          <div
             className="absolute -bottom-12 -left-12 pointer-events-none z-0 transition-opacity duration-1000"
             style={{
               color: `rgba(${item.color}, 1)`,
@@ -169,7 +211,7 @@ const StickyCard = ({ item, i, isLast, setLastActive }: { key?: React.Key, item:
             <Icon className="w-64 h-64" strokeWidth={2} />
           </div>
         )}
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
           <h4 className="text-2xl font-medium text-slate-900 max-w-[220px] flex flex-wrap gap-x-[0.25em] leading-tight content-start">
             {item.title.split(" ").map((word: string, idx: number) => (
@@ -199,7 +241,7 @@ const TimelineStep = ({ item, i, isLast, setLastActive }: { key?: React.Key, ite
     target: ref,
     offset: ["start 80%", "start 30%"]
   });
-  
+
   const [status, setStatus] = useState<'upcoming' | 'active' | 'past'>(i === 0 ? 'active' : 'upcoming');
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -224,12 +266,12 @@ const TimelineStep = ({ item, i, isLast, setLastActive }: { key?: React.Key, ite
   return (
     <div ref={ref} className="relative pl-10 md:pl-16 pb-16">
       {/* Timeline Node */}
-      <div 
+      <div
         className={`absolute left-[7px] md:left-[11px] top-1 w-4 h-4 rounded-full border-2 z-10 transition-colors duration-700 ${isActiveOrPast ? 'bg-white' : 'bg-slate-200 border-slate-300'}`}
         style={{ borderColor: isActiveOrPast ? `rgba(${item.color}, 0.55)` : undefined }}
       >
         {isActiveOrPast && (
-          <motion.div 
+          <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, ease: "easeOut" as const }}
@@ -246,12 +288,12 @@ const TimelineStep = ({ item, i, isLast, setLastActive }: { key?: React.Key, ite
 
       {/* Timeline Line (Colored Fill) */}
       {!isLast && (
-        <motion.div 
+        <motion.div
           className="absolute left-[14px] md:left-[18px] top-5 bottom-[-4px] w-0.5 origin-top"
-          style={{ 
+          style={{
             scaleY: lineHeight,
             backgroundColor: `rgba(${item.color}, 0.25)`
-          }} 
+          }}
         />
       )}
 
@@ -319,7 +361,7 @@ export const AboutFund = () => {
   const tabs = ['Why CeF', 'Fund Aims', 'How CeF Works'];
 
   return (
-    <motion.section 
+    <motion.section
       ref={sectionRef}
       style={{ opacity }}
       className="bg-[var(--color-background)] text-[var(--color-text-primary)] relative z-20"
@@ -327,7 +369,7 @@ export const AboutFund = () => {
       {/* DARK SECTION: Mandate & Bento Grid */}
       <div className="py-32">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, amount: 0.2 }}
@@ -341,7 +383,7 @@ export const AboutFund = () => {
                   Our Mandate
                 </span>
               </motion.div>
-              
+
               <motion.h2 variants={fadeUp} className="text-3xl md:text-[42px] font-medium leading-[1.15] tracking-tight text-[var(--color-text-primary)] mb-12">
                 We provide local currency funding from domestic institutional investors to small and medium sized climate compliant energy projects.
               </motion.h2>
@@ -358,7 +400,7 @@ export const AboutFund = () => {
 
             {/* Bento Grid (5 Boxes) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <FocusCard 
+              <FocusCard
                 icon={Sun}
                 headline="Energy Transition"
                 statement="Decarbonizing the National Grid with Renewable Infrastructure."
@@ -367,7 +409,7 @@ export const AboutFund = () => {
                 tooltipText="Clean Energy Focus"
                 image="https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=800&auto=format&fit=crop"
               />
-              <FocusCard 
+              <FocusCard
                 icon={ShieldCheck}
                 headline="Financial Resilience"
                 statement="Eliminating FX Risk through Local Currency Funding."
@@ -376,7 +418,7 @@ export const AboutFund = () => {
                 tooltipText="Risk Management"
                 image="https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=80&w=800&auto=format&fit=crop"
               />
-              <FocusCard 
+              <FocusCard
                 icon={Users}
                 headline="Social Equity"
                 statement="Bridging the Energy Gap for Underserved Communities."
@@ -385,9 +427,9 @@ export const AboutFund = () => {
                 tooltipText="Community Impact"
                 image="https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?q=80&w=800&auto=format&fit=crop"
               />
-              
+
               {/* Box 4: Wide Image Box with Slider */}
-              <FocusCard 
+              <FocusCard
                 icon={Globe2}
                 headline="Fund Credentials"
                 isWide={true}
@@ -397,7 +439,7 @@ export const AboutFund = () => {
               >
                 <div className="relative h-28 overflow-hidden">
                   <AnimatePresence mode="wait">
-                    <motion.h3 
+                    <motion.h3
                       key={credentialIndex}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -412,7 +454,7 @@ export const AboutFund = () => {
               </FocusCard>
 
               {/* Box 5: Gender Spotlight */}
-              <FocusCard 
+              <FocusCard
                 icon={Globe2} // Using Globe2 as placeholder for Venus/Gender
                 headline="Strategic Priority"
                 statement="Gender & Impact Lens: Driving inclusive growth through targeted climate investments."
@@ -423,40 +465,52 @@ export const AboutFund = () => {
             </div>
 
             {/* Strategic Partners Strip */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] as const }}
-              className="mt-24 pt-16 border-t border-white/5"
-            >
+
+            <div className="py-12 border-t border-[var(--color-border)]">
               <div className="flex flex-col items-center">
-                <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-[var(--color-text-tertiary)] mb-12">
+                <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-[var(--color-text-tertiary)] mb-8">
                   Strategic Partners & Funders
                 </span>
-                
+
                 <div className="w-full overflow-hidden relative">
-                  {/* Gradient masks */}
-                  <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[var(--color-background)] to-transparent z-10 pointer-events-none" />
-                  <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[var(--color-background)] to-transparent z-10 pointer-events-none" />
-                  
-                  <motion.div 
+                  <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
+                  <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
+
+                  <motion.div
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
                     className="flex items-center gap-16 md:gap-24 whitespace-nowrap w-max px-12"
                   >
                     {[
-                      'NSIA', 'InfraCredit', 'Shelter Afrique', 'All On', 'Climate Bonds', 'FMDQ', 'USAID', 'UK NIAF',
-                      'NSIA', 'InfraCredit', 'Shelter Afrique', 'All On', 'Climate Bonds', 'FMDQ', 'USAID', 'UK NIAF'
-                    ].map((partner, i) => (
-                      <span key={i} className="text-lg md:text-2xl font-serif italic tracking-tight text-[var(--color-text-secondary)]/30 hover:text-[var(--color-text-secondary)] transition-colors cursor-default">
-                        {partner}
-                      </span>
-                    ))}
+                      ...partners,
+                      ...partners, // duplicate for seamless loop
+                    ].map((partner, i) =>
+                      partner.type === "text" ? (
+                        <span
+                          key={i}
+                          className="text-lg md:text-2xl font-serif italic tracking-tight text-[var(--color-text-secondary)]/30 hover:text-[var(--color-text-secondary)] transition-colors cursor-default"
+                        >
+                          {partner.name}
+                        </span>
+                      ) : (
+                        <div
+                          key={i}
+                          className="flex items-center justify-center h-8 w-32 flex-shrink-0
+                                     grayscale opacity-30 hover:grayscale-0 hover:opacity-100
+                                     transition-all duration-300 cursor-default"
+                        >
+                          <img
+                            src={partner.src}
+                            alt={partner.name}
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      )
+                    )}
                   </motion.div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -468,7 +522,7 @@ export const AboutFund = () => {
             <span className="text-slate-900">Our Approach & </span>
             <span className="text-slate-400">Rationale</span>
           </h2>
-          
+
           {/* Tabs */}
           <div className="sticky top-[65px] z-40 bg-[#F8FAFC] pt-6 pb-0 mb-16 -mx-6 px-6 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
             <div className="flex gap-8 md:gap-12 border-b border-slate-200 overflow-x-auto no-scrollbar px-6 -mx-6 sm:px-0 sm:mx-0 pt-2">
@@ -476,13 +530,12 @@ export const AboutFund = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${
-                    activeTab === tab ? "text-[var(--color-accent-light)]" : "text-slate-400 hover:text-slate-600"
-                  }`}
+                  className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[var(--color-accent-light)]" : "text-slate-400 hover:text-slate-600"
+                    }`}
                 >
                   {tab}
                   {activeTab === tab && (
-                    <motion.div 
+                    <motion.div
                       layoutId="activeTab"
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--color-accent-light)]"
                     />
@@ -496,7 +549,7 @@ export const AboutFund = () => {
           <div className="min-h-[600px]">
             <AnimatePresence mode="wait">
               {activeTab === 'Why CeF' && (
-                <motion.div 
+                <motion.div
                   key="why-cef"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -519,7 +572,7 @@ export const AboutFund = () => {
                         <p className="text-xl text-slate-600 font-light leading-relaxed max-w-md">
                           CeF addresses this gap by structuring investments that combine credit enhancement, blended finance, and institutional capital mobilisation.
                         </p>
-                        
+
                         <AnimatePresence>
                           {isLastCardActive && (
                             <motion.div
@@ -569,12 +622,12 @@ export const AboutFund = () => {
                           icon: Leaf
                         }
                       ].map((item, i, arr) => (
-                        <StickyCard 
-                          key={i} 
-                          item={item} 
-                          i={i} 
-                          isLast={i === arr.length - 1} 
-                          setLastActive={setIsLastCardActive} 
+                        <StickyCard
+                          key={i}
+                          item={item}
+                          i={i}
+                          isLast={i === arr.length - 1}
+                          setLastActive={setIsLastCardActive}
                         />
                       ))}
                     </div>
@@ -583,7 +636,7 @@ export const AboutFund = () => {
               )}
 
               {activeTab === 'Fund Aims' && (
-                <motion.div 
+                <motion.div
                   key="fund-aims"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -599,9 +652,9 @@ export const AboutFund = () => {
                     { title: "Integrated Portfolio", desc: "Create a diversified portfolio managing collective risk across value chains.", img: "https://images.unsplash.com/photo-1454165833767-027ff33027ef?q=80&w=2670&auto=format&fit=crop" }
                   ].map((item, i) => (
                     <div key={i} className="group relative h-[320px] rounded-lg overflow-hidden bg-slate-900">
-                      <img 
-                        src={item.img} 
-                        alt={item.title} 
+                      <img
+                        src={item.img}
+                        alt={item.title}
                         className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
                         referrerPolicy="no-referrer"
                       />
@@ -625,7 +678,7 @@ export const AboutFund = () => {
               )}
 
               {activeTab === 'How CeF Works' && (
-                <motion.div 
+                <motion.div
                   key="how-works"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -640,7 +693,7 @@ export const AboutFund = () => {
                         <h3 className="text-2xl font-medium leading-tight mb-8 text-slate-900">
                           Our operating model is designed to unlock scalable, local currency financing for clean energy projects through strategic partnerships and blended finance.
                         </h3>
-                        
+
                         <AnimatePresence>
                           {isHowWorksLastActive && (
                             <motion.div
@@ -662,32 +715,32 @@ export const AboutFund = () => {
                     {/* Scrolling Right Column - Timeline Reveal */}
                     <div className="lg:col-span-7 pb-12">
                       {[
-                        { 
-                          title: "Credit\nEnhancement", 
+                        {
+                          title: "Credit\nEnhancement",
                           content: "InfraCredit provides AAA-rated guarantees to de-risk investments.",
                           color: "0, 133, 202" // Light Blue
                         },
-                        { 
-                          title: "Catalytic\nCapital", 
+                        {
+                          title: "Catalytic\nCapital",
                           content: "CeF provides subordinated or bridge capital to optimize capital structures.",
                           color: "242, 125, 38" // Orange
                         },
-                        { 
-                          title: "Institutional\nInvestment", 
+                        {
+                          title: "Institutional\nInvestment",
                           content: "Pension funds and insurance companies provide senior debt financing.",
                           color: "80, 184, 72" // Green
                         },
-                        { 
-                          title: "Scalable\nImpact", 
+                        {
+                          title: "Scalable\nImpact",
                           content: "The model unlocks scalable local currency financing for clean energy projects.",
                           color: "32, 58, 143" // Dark Blue
                         }
                       ].map((item, i, arr) => (
-                        <TimelineStep 
-                          key={i} 
-                          item={item} 
-                          i={i} 
-                          isLast={i === arr.length - 1} 
+                        <TimelineStep
+                          key={i}
+                          item={item}
+                          i={i}
+                          isLast={i === arr.length - 1}
                           setLastActive={setIsHowWorksLastActive}
                         />
                       ))}

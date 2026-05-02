@@ -4,6 +4,47 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Building2, Globe, ArrowUpRight, Linkedin, Youtube, Instagram, Lightbulb, X } from 'lucide-react';
 import { usePathname } from "next/navigation";
 
+const partners = [
+  {
+    type: "logo",
+    name: "NSIA",
+    src: "https://nsia.com.ng/wp-content/uploads/2022/08/NSIA-Logo.svg"
+  },
+  {
+    type: "logo",
+    name: "InfraCredit",
+    src: "https://infracredit.ng/update/wp-content/uploads/2020/10/InfraCredit.svg",
+  },
+  {
+    type: "logo",
+    name: "Shelter Afrique",
+    src: "/assets/shelter afrique.svg",
+  },
+  {
+    type: "text",
+    name: "All On",
+  },
+  {
+    type: "logo",
+    name: "Climate Bonds",
+    src: "https://www.climatebonds.net/assets/images/cb-logo.svg",
+  },
+  {
+    type: "logo",
+    name: "FMDQ",
+    src: "https://fmdqgroup.com/wp-content/uploads/2021/11/FMDQ-LOGO-November-2020.svg",
+  },
+  {
+    type: "logo",
+    name: "USAID",
+    src: "/assets/USAID.svg",
+  },
+  {
+    type: "logo",
+    name: "UK NIAF",
+    src: "/assets/UKNIAF_Logo-1.svg",
+  },
+] as const;
 
 const defaultCtaData = [
   {
@@ -92,7 +133,7 @@ export const Footer = () => {
   const location = typeof window !== 'undefined' ? window.location : { hash: '', pathname };
   const isAboutPage = location.pathname === '/about';
   const isGovernancePage = location.pathname === '/governance';
-  
+
   const currentCtaData = isGovernancePage ? governanceCtaData : (isAboutPage ? aboutCtaData : defaultCtaData);
 
   const handleCtaClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -104,32 +145,31 @@ export const Footer = () => {
 
   return (
     <footer className="bg-[#040d18] text-white pt-0 pb-12 relative z-20 border-t-2 border-electric-blue">
-      
+
       <div className="max-w-7xl mx-auto px-6">
-        
+
         {/* Connected Boxes CTA Section */}
         <div className="mb-32 pt-20">
           <h2 className="text-3xl md:text-[42px] font-medium mb-16 tracking-tight leading-[1.15]">
             <span className="text-white">Partnering for impact</span>{' '}
             <span className="text-electric-blue">across all sectors</span>
           </h2>
-          
+
           <div className="border border-white/10 bg-[#040d18] ">
             <div className="grid grid-cols-1 md:grid-cols-3">
               {currentCtaData.map((cta, index) => (
-                <a 
+                <a
                   key={index}
                   href={cta.href}
                   onClick={(e) => handleCtaClick(e, cta.href)}
-                  className={`group relative p-10 md:p-12 flex flex-col justify-between min-h-[360px] transition-colors duration-500 cursor-pointer ${
-                    index !== currentCtaData.length - 1 ? 'border-b md:border-b-0 md:border-r border-white/10' : ''
-                  }`}
+                  className={`group relative p-10 md:p-12 flex flex-col justify-between min-h-[360px] transition-colors duration-500 cursor-pointer ${index !== currentCtaData.length - 1 ? 'border-b md:border-b-0 md:border-r border-white/10' : ''
+                    }`}
                 >
                   {/* Image Background with "Why CEF" Blue Overlay */}
                   <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity">
-                    <img 
-                      src={cta.image} 
-                      alt={cta.title} 
+                    <img
+                      src={cta.image}
+                      alt={cta.title}
                       className="w-full h-full object-cover mix-blend-luminosity grayscale"
                       referrerPolicy="no-referrer"
                     />
@@ -161,24 +201,42 @@ export const Footer = () => {
                 <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-[var(--color-text-tertiary)] mb-8">
                   Strategic Partners & Funders
                 </span>
-                
+
                 <div className="w-full overflow-hidden relative">
                   <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
                   <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
-                  
-                  <motion.div 
+
+                  <motion.div
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
                     className="flex items-center gap-16 md:gap-24 whitespace-nowrap w-max px-12"
                   >
                     {[
-                      'NSIA', 'InfraCredit', 'Shelter Afrique', 'All On', 'Climate Bonds', 'FMDQ', 'USAID', 'UK NIAF',
-                      'NSIA', 'InfraCredit', 'Shelter Afrique', 'All On', 'Climate Bonds', 'FMDQ', 'USAID', 'UK NIAF'
-                    ].map((partner, i) => (
-                      <span key={i} className="text-lg md:text-2xl font-serif italic tracking-tight text-[var(--color-text-secondary)]/30 hover:text-[var(--color-text-secondary)] transition-colors cursor-default">
-                        {partner}
-                      </span>
-                    ))}
+                      ...partners,
+                      ...partners, // duplicate for seamless loop
+                    ].map((partner, i) =>
+                      partner.type === "text" ? (
+                        <span
+                          key={i}
+                          className="text-lg md:text-2xl font-serif italic tracking-tight text-[var(--color-text-secondary)]/30 hover:text-[var(--color-text-secondary)] transition-colors cursor-default"
+                        >
+                          {partner.name}
+                        </span>
+                      ) : (
+                        <div
+                          key={i}
+                          className="flex items-center justify-center h-8 w-32 flex-shrink-0
+                         grayscale opacity-30 hover:grayscale-0 hover:opacity-100
+                         transition-all duration-300 cursor-default"
+                        >
+                          <img
+                            src={partner.src}
+                            alt={partner.name}
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      )
+                    )}
                   </motion.div>
                 </div>
               </div>
@@ -189,13 +247,13 @@ export const Footer = () => {
         {/* Main Footer Navigation */}
         <div className="border-t border-[var(--color-border)] pt-20 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-24">
-            
+
             {/* Brand Column */}
             <div className="lg:col-span-3">
               <div className="flex items-center gap-3 mb-6">
-                <img 
-                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/Clean-Energy-Logo-1-2.svg" 
-                  alt="Clean Energy Local Currency Fund" 
+                <img
+                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/Clean-Energy-Logo-1-2.svg"
+                  alt="Clean Energy Local Currency Fund"
                   className="h-12 w-auto"
                   referrerPolicy="no-referrer"
                 />
@@ -240,9 +298,9 @@ export const Footer = () => {
 
             <div className="lg:col-span-3">
               <div className="mb-6">
-                <img 
-                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/FundCo.svg" 
-                  alt="FundCo Capital Managers" 
+                <img
+                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/FundCo.svg"
+                  alt="FundCo Capital Managers"
                   className="h-12 w-auto"
                   referrerPolicy="no-referrer"
                 />
@@ -252,9 +310,9 @@ export const Footer = () => {
               </p>
 
               <div className="mb-6">
-                <img 
-                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/ren-cap-01-1.svg" 
-                  alt="Renaissance Capital" 
+                <img
+                  src="https://reverse.cleanenergyfund.ng/wp-content/uploads/2023/09/ren-cap-01-1.svg"
+                  alt="Renaissance Capital"
                   className="h-16 w-auto"
                   referrerPolicy="no-referrer"
                 />
@@ -308,21 +366,21 @@ export const Footer = () => {
             >
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <h3 className="text-2xl font-medium text-white">Submit Project</h3>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
                   className="text-white/50 hover:text-white transition-colors p-2 rounded-full hover:bg-white/5"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="p-6 overflow-y-auto">
                 <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setIsModalOpen(false); }}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-white/80">Project Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--color-accent-green)] transition-colors"
                         placeholder="e.g. Solar Mini-Grid Phase 1"
@@ -330,7 +388,7 @@ export const Footer = () => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-white/80">Sector</label>
-                      <select 
+                      <select
                         required
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-accent-green)] transition-colors appearance-none"
                       >
@@ -346,7 +404,7 @@ export const Footer = () => {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-white/80">Project Description</label>
-                    <textarea 
+                    <textarea
                       required
                       rows={4}
                       className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--color-accent-green)] transition-colors resize-none"
@@ -356,7 +414,7 @@ export const Footer = () => {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-white/80">Expected Impact</label>
-                    <textarea 
+                    <textarea
                       required
                       rows={3}
                       className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--color-accent-green)] transition-colors resize-none"
@@ -367,8 +425,8 @@ export const Footer = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-white/80">Contact Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--color-accent-green)] transition-colors"
                         placeholder="Your full name"
@@ -376,8 +434,8 @@ export const Footer = () => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-white/80">Email Address</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         required
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--color-accent-green)] transition-colors"
                         placeholder="you@company.com"
@@ -386,14 +444,14 @@ export const Footer = () => {
                   </div>
 
                   <div className="pt-4 flex justify-end gap-4">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
                       className="px-6 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       type="submit"
                       className="px-8 py-3 rounded-lg text-sm font-medium bg-[var(--color-accent-green)] text-white hover:bg-[var(--color-accent)] transition-colors shadow-lg"
                     >
