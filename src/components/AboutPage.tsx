@@ -2,10 +2,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { 
-  ArrowUpRight, ShieldCheck, Award, TrendingUp, 
-  Zap, Flame, Wheat, Wifi, Bus, ChevronLeft, ChevronRight,
-  Leaf, Users, CheckCircle2, Lightbulb, Sun, Wind, Battery,
-  Banknote, Rocket, Target, Landmark, Building2, Plus
+  ArrowUpRight, ShieldCheck, TrendingUp, 
+  Zap, ChevronLeft, ChevronRight,
+  Leaf, Users, Lightbulb, Sun, Wind,
+  Landmark, Building2, Plus
 } from 'lucide-react';
 import Link from "next/link";
 import Breadcrumbs from './Breadcrumbs';
@@ -32,6 +32,7 @@ export const AboutPage = () => {
       <HeroSection />
       <StickySubNav />
       <AboutFundSection />
+      <MacroProblemSection />
       <FundOverviewSection />
       <FundStructureSection />
       <TechnicalAssistanceSection />

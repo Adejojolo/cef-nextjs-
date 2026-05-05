@@ -384,22 +384,22 @@ export const AboutFund = () => {
                 </span>
               </motion.div>
 
-              <motion.h2 variants={fadeUp} className="text-3xl md:text-[42px] font-medium leading-[1.15] tracking-tight text-[var(--color-text-primary)] mb-12">
+              <motion.h2 variants={fadeUp} className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium leading-[1.2] sm:leading-[1.15] tracking-tight text-[var(--color-text-primary)] mb-8 sm:mb-12">
                 We provide local currency funding from domestic institutional investors to small and medium sized climate compliant energy projects.
               </motion.h2>
 
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-8 items-start sm:items-center">
-                <button className="bg-white text-black hover:bg-[var(--color-accent-green)] hover:text-white px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-lg">
-                  Download Fact Sheet <ArrowUpRight className="w-4 h-4" />
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 items-start sm:items-center">
+                <button className="bg-white text-black hover:bg-[var(--color-accent-green)] hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto">
+                  Download Fact Sheet <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
-                <button className="text-white/80 px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 hover:text-white">
-                  Discover Fund <ArrowUpRight className="w-4 h-4" />
+                <button className="text-white/80 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 hover:text-white w-full sm:w-auto">
+                  Discover Fund <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               </motion.div>
             </div>
 
             {/* Bento Grid (5 Boxes) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <FocusCard
                 icon={Sun}
                 headline="Energy Transition"
@@ -517,20 +517,20 @@ export const AboutFund = () => {
 
       {/* LIGHT SECTION: Approach & Rationale */}
       <div className="bg-[#F8FAFC] py-32 text-slate-900 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-[42px] font-medium leading-[1.15] tracking-tight mb-12">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-medium leading-[1.2] sm:leading-[1.15] tracking-tight mb-8 sm:mb-12 lg:mb-16">
             <span className="text-slate-900">Our Approach & </span>
             <span className="text-slate-400">Rationale</span>
           </h2>
 
           {/* Tabs */}
-          <div className="sticky top-[65px] z-40 bg-[#F8FAFC] pt-6 pb-0 mb-16 -mx-6 px-6 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
-            <div className="flex gap-8 md:gap-12 border-b border-slate-200 overflow-x-auto no-scrollbar px-6 -mx-6 sm:px-0 sm:mx-0 pt-2">
+          <div className="sticky top-[65px] z-40 bg-[#F8FAFC] pt-4 sm:pt-6 pb-0 mb-12 sm:mb-16 -mx-6 px-6 sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12">
+            <div className="flex gap-6 sm:gap-8 md:gap-12 border-b border-slate-200 overflow-x-auto no-scrollbar px-6 -mx-6 sm:px-0 sm:mx-0 pt-2">
               {tabs.map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`pb-4 text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap ${activeTab === tab ? "text-[var(--color-accent-light)]" : "text-slate-400 hover:text-slate-600"
+                  className={`pb-3 sm:pb-4 text-xs sm:text-sm font-bold uppercase tracking-widest transition-all relative whitespace-nowrap min-w-max ${activeTab === tab ? "text-[var(--color-accent-light)]" : "text-slate-400 hover:text-slate-600"
                     }`}
                 >
                   {tab}
@@ -554,22 +554,22 @@ export const AboutFund = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="flex flex-col gap-16"
+                  className="flex flex-col gap-12 sm:gap-16"
                 >
                   {/* Row 1: Big Title (3/4 width) */}
                   <div className="lg:w-3/4">
-                    <span className="text-xs font-bold text-[var(--color-accent-light)] uppercase tracking-widest mb-6 block">/ Fund Rationale</span>
-                    <h3 className="text-2xl md:text-3xl font-medium leading-[1.2] tracking-tight text-slate-900">
+                    <span className="text-[10px] sm:text-xs font-bold text-[var(--color-accent-light)] uppercase tracking-widest mb-4 sm:mb-6 block">/ Fund Rationale</span>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium leading-[1.3] md:leading-[1.2] tracking-tight text-slate-900">
                       <TextReveal text="Commercial financing in Nigeria often does not provide long-term local currency funding for infrastructure projects due to FX risk, tenor limitations, and perceived credit risks." />
                     </h3>
                   </div>
 
                   {/* Row 2: Split Content */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16">
                     {/* Sticky Left Column: Description */}
                     <div className="lg:col-span-5">
                       <div className="lg:sticky lg:top-32">
-                        <p className="text-xl text-slate-600 font-light leading-relaxed max-w-md">
+                        <p className="text-base sm:text-lg md:text-xl text-slate-600 font-light leading-relaxed max-w-md">
                           CeF addresses this gap by structuring investments that combine credit enhancement, blended finance, and institutional capital mobilisation.
                         </p>
 
@@ -580,13 +580,13 @@ export const AboutFund = () => {
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -20 }}
                               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] as const }}
-                              className="mt-12 flex flex-row items-center gap-6"
+                              className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6"
                             >
-                              <button className="bg-slate-900 text-white hover:bg-[var(--color-accent-light)] hover:text-white px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-lg w-fit whitespace-nowrap">
-                                Download Fund Rationale <ArrowUpRight className="w-4 h-4" />
+                              <button className="bg-slate-900 text-white hover:bg-[var(--color-accent-light)] hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-lg w-full sm:w-fit whitespace-nowrap">
+                                Download Fund Rationale <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
-                              <a href="#structure" className="text-slate-600 hover:text-slate-900 px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap">
-                                View Fund Structure <ArrowUpRight className="w-4 h-4" />
+                              <a href="#structure" className="text-slate-600 hover:text-slate-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-fit">
+                                View Fund Structure <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
                               </a>
                             </motion.div>
                           )}
@@ -595,7 +595,7 @@ export const AboutFund = () => {
                     </div>
 
                     {/* Scrolling Right Column with Stacking Interaction */}
-                    <div className="lg:col-span-7 pb-32 relative">
+                    <div className="lg:col-span-7 pb-16 sm:pb-24 lg:pb-32 relative">
                       {[
                         {
                           title: "Addressing the Energy Deficit",

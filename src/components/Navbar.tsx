@@ -1,13 +1,27 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { Search, Lock, X, Menu, Download, Zap, Leaf, TrendingUp, Users, ShieldCheck, ArrowUpRight, CheckCircle2, Building2, Globe2, Sun, Wind, Battery, Droplets, ChevronRight, Layers, Aperture, Lightbulb } from "lucide-react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import {
+  Search,
+  Lock,
+  X,
+  Menu,
+  Download,
+  ShieldCheck,
+  ArrowUpRight,
+} from "lucide-react";
 import { cn } from "../lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { portfolioData } from "../data/projects";
 
-// --- Animation Variants ---
+// ─── Animation Variants ───────────────────────────────────────────────────────
+
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -33,12 +47,21 @@ const megaMenuContainer = {
     pointerEvents: "auto" as const,
     transition: { duration: 0.3, when: "beforeChildren", staggerChildren: 0.05 },
   },
-  exit: { opacity: 0, y: -10, pointerEvents: "none" as const, transition: { duration: 0.2 } },
+  exit: {
+    opacity: 0,
+    y: -10,
+    pointerEvents: "none" as const,
+    transition: { duration: 0.2 },
+  },
 };
 
 const megaMenuColumn = {
   hidden: { opacity: 0, y: 15 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const, staggerChildren: 0.08 } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const, staggerChildren: 0.08 },
+  },
 };
 
 const megaMenuItem = {
@@ -48,8 +71,30 @@ const megaMenuItem = {
 
 const megaMenuCard = {
   hidden: { opacity: 0, scale: 0.95, filter: "blur(4px)" },
-  visible: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 0.5, ease: "easeOut" as const } },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
 };
+
+// Mobile menu slide-in from top
+const mobileMenuVariants = {
+  hidden: { opacity: 0, y: "-100%" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const },
+  },
+  exit: {
+    opacity: 0,
+    y: "-100%",
+    transition: { duration: 0.35, ease: [0.4, 0, 1, 1] as const },
+  },
+};
+
+// ─── Navbar ───────────────────────────────────────────────────────────────────
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -57,16 +102,19 @@ export const Navbar = () => {
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loginOpen, setLoginOpen] = useState(false);
 
+  // FIX 1: Use usePathname only — removed redundant window.location variable
   const pathname = usePathname();
-  const location = typeof window !== "undefined" ? window.location : null;
+  const isArticlePage = pathname.startsWith("/news");
 
-  const searchResults = portfolioData.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.sector.toLowerCase().includes(searchQuery.toLowerCase())
-  ).slice(0, 5);
-
-  const isArticlePage = (location?.pathname || pathname || "").startsWith("/news");
+  const searchResults = portfolioData
+    .filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.sector.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+    .slice(0, 5);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -80,6 +128,11 @@ export const Navbar = () => {
   const useDarkText = isSolidWhiteNav || (!isSolidDark && scrolled);
 
   const closeMegaMenu = () => setActiveMegaMenu(null);
+
+  // FIX 2: Click-toggle for mega menus — supports tablet touch in addition to desktop hover
+  const toggleMegaMenu = (menu: string) => {
+    setActiveMegaMenu((prev) => (prev === menu ? null : menu));
+  };
 
   return (
     <nav
@@ -98,6 +151,7 @@ export const Navbar = () => {
       onMouseLeave={closeMegaMenu}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between w-full relative">
+
         {/* Logo */}
         <Link
           href="/"
@@ -116,17 +170,20 @@ export const Navbar = () => {
           />
         </Link>
 
-        {/* Desktop Nav - Center */}
-        <div className="hidden md:flex items-center justify-center gap-8 flex-1">
-          {/* About Mega Menu */}
+        {/* Desktop Nav — Center: lg (1024px+) only — prevents cramping on tablets */}
+        <div className="hidden lg:flex items-center justify-center gap-8 flex-1">
+
+          {/* About — hover on desktop, click-toggle on tablet */}
           <div
             className="group h-full flex items-center"
             onMouseEnter={() => setActiveMegaMenu("about")}
+            onClick={() => toggleMegaMenu("about")}
           >
+            {/* FIX 3: Added py-3 to ensure ≥44px tap target height */}
             <Link
               href="/about"
               className={cn(
-                "text-sm font-medium transition-colors flex items-center gap-1 h-full py-2 cursor-pointer",
+                "text-sm font-medium transition-colors flex items-center gap-1 py-3 cursor-pointer",
                 useDarkText
                   ? "text-gray-800 hover:text-[var(--color-accent)]"
                   : "text-white/90 hover:text-white",
@@ -139,11 +196,12 @@ export const Navbar = () => {
           <div
             className="group h-full flex items-center"
             onMouseEnter={() => setActiveMegaMenu("portfolio")}
+            onClick={() => toggleMegaMenu("portfolio")}
           >
             <Link
               href="/portfolio"
               className={cn(
-                "text-sm font-medium transition-colors flex items-center gap-1 h-full py-2 cursor-pointer",
+                "text-sm font-medium transition-colors flex items-center gap-1 py-3 cursor-pointer",
                 useDarkText
                   ? "text-gray-800 hover:text-[var(--color-accent)]"
                   : "text-white/90 hover:text-white",
@@ -156,7 +214,7 @@ export const Navbar = () => {
           <Link
             href="/impact"
             className={cn(
-              "text-sm font-medium transition-colors flex items-center gap-1",
+              "text-sm font-medium transition-colors flex items-center gap-1 py-3",
               useDarkText
                 ? "text-gray-800 hover:text-[var(--color-accent)]"
                 : "text-white/90 hover:text-white",
@@ -169,7 +227,7 @@ export const Navbar = () => {
           <Link
             href="/investor-relations"
             className={cn(
-              "text-sm font-medium transition-colors flex items-center gap-1",
+              "text-sm font-medium transition-colors flex items-center gap-1 py-3",
               useDarkText
                 ? "text-gray-800 hover:text-[var(--color-accent)]"
                 : "text-white/90 hover:text-white",
@@ -182,7 +240,7 @@ export const Navbar = () => {
           <Link
             href="/eligibility"
             className={cn(
-              "text-sm font-medium transition-colors flex items-center gap-1",
+              "text-sm font-medium transition-colors flex items-center gap-1 py-3",
               useDarkText
                 ? "text-gray-800 hover:text-[var(--color-accent)]"
                 : "text-white/90 hover:text-white",
@@ -192,15 +250,16 @@ export const Navbar = () => {
             Eligibility Criteria
           </Link>
 
-          {/* Media Center Mega Menu */}
+          {/* Media Center — hover on desktop, click-toggle on tablet */}
           <div
             className="group h-full flex items-center"
             onMouseEnter={() => setActiveMegaMenu("news")}
+            onClick={() => toggleMegaMenu("news")}
           >
             <Link
               href="/resources"
               className={cn(
-                "text-sm font-medium transition-colors flex items-center gap-1 h-full py-2 cursor-pointer",
+                "text-sm font-medium transition-colors flex items-center gap-1 py-3 cursor-pointer",
                 useDarkText
                   ? "text-gray-800 hover:text-[var(--color-accent)]"
                   : "text-white/90 hover:text-white",
@@ -213,7 +272,7 @@ export const Navbar = () => {
           <Link
             href="/contact"
             className={cn(
-              "text-sm font-medium transition-colors flex items-center gap-1",
+              "text-sm font-medium transition-colors flex items-center gap-1 py-3",
               useDarkText
                 ? "text-gray-800 hover:text-[var(--color-accent)]"
                 : "text-white/90 hover:text-white",
@@ -224,8 +283,8 @@ export const Navbar = () => {
           </Link>
         </div>
 
-        {/* Desktop Nav - Right */}
-        <div className="hidden md:flex items-center justify-end gap-5 shrink-0 z-[110] relative">
+        {/* Desktop Nav — Right: lg (1024px+) only */}
+        <div className="hidden lg:flex items-center justify-end gap-5 shrink-0 z-[110] relative">
           <button
             onClick={() => setIsSearchOpen(true)}
             className={cn(
@@ -238,8 +297,10 @@ export const Navbar = () => {
             <Search className="w-5 h-5 stroke-[1.5]" />
           </button>
 
-          <div className="group/login flex items-center">
-            <div
+          <div className="relative flex items-center">
+            <button
+              onClick={() => setLoginOpen((v) => !v)}
+              aria-label="Account"
               className={cn(
                 "transition-colors flex items-center p-1 cursor-pointer",
                 useDarkText
@@ -248,42 +309,60 @@ export const Navbar = () => {
               )}
             >
               <Lock className="w-5 h-5 stroke-[1.5]" />
-            </div>
+            </button>
 
-            <div className="absolute right-0 top-[40px] pt-4 w-48 opacity-0 invisible group-hover/login:opacity-100 group-hover/login:visible transition-all duration-300">
-              <div className="bg-white border border-gray-100 shadow-xl rounded-lg overflow-hidden transform origin-top-right group-hover/login:translate-y-0 translate-y-2">
-                <div className="py-2 flex flex-col">
-                  <a
-                    href="#"
-                    className="px-5 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 hover:text-[var(--color-accent)] transition-colors text-left flex items-center"
+            <AnimatePresence>
+              {loginOpen && (
+                <>
+                  {/* Click-outside backdrop */}
+                  <div
+                    className="fixed inset-0 z-[105]"
+                    onClick={() => setLoginOpen(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 top-[calc(100%+12px)] w-48 z-[106] bg-white border border-gray-100 shadow-xl rounded-sm overflow-hidden"
                   >
-                    Login
-                  </a>
-                  <a
-                    href="#"
-                    className="px-5 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 hover:text-[var(--color-accent)] transition-colors text-left flex items-center"
-                  >
-                    Register
-                  </a>
-                </div>
-              </div>
-            </div>
+                    <div className="py-2 flex flex-col">
+                      <a
+                        href="#"
+                        onClick={() => setLoginOpen(false)}
+                        className="px-5 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 hover:text-[var(--color-accent)] transition-colors text-left flex items-center"
+                      >
+                        Login
+                      </a>
+                      <a
+                        href="#"
+                        onClick={() => setLoginOpen(false)}
+                        className="px-5 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50 hover:text-[var(--color-accent)] transition-colors text-left flex items-center"
+                      >
+                        Register
+                      </a>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* Mobile/Tablet Toggle — visible below lg (1024px) */}
         <button
           className={cn(
-            "md:hidden z-50 transition-colors",
+            "lg:hidden z-50 transition-colors p-2",
             useDarkText ? "text-black" : "text-white",
           )}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {mobileMenuOpen ? <X /> : <Menu />}
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mega Menu Dropdowns Overlay (Flush to nav and full width) */}
+      {/* ── Mega Menu Overlay ─────────────────────────────────────────────── */}
       <AnimatePresence>
         {activeMegaMenu && (
           <motion.div
@@ -293,6 +372,8 @@ export const Navbar = () => {
             exit="exit"
             className="absolute left-0 w-full bg-white border-t border-gray-100 shadow-xl z-[100] top-full"
           >
+
+            {/* About */}
             {activeMegaMenu === "about" && (
               <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-4 gap-12 text-left">
                 <div className="col-span-1 lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -305,35 +386,24 @@ export const Navbar = () => {
                       About Us
                     </Link>
                     <div className="flex flex-col gap-4">
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/about#mission"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Our Mission
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/about#approach"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Our Approach
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/about#impact"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Governance & Impact
-                        </Link>
-                      </motion.div>
+                      {[
+                        { href: "/about#mission", label: "Our Mission" },
+                        { href: "/about#approach", label: "Our Approach" },
+                        { href: "/about#impact", label: "Governance & Impact" },
+                      ].map((item) => (
+                        <motion.div variants={megaMenuItem} key={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={closeMegaMenu}
+                            className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
                     </div>
                   </motion.div>
+
                   <motion.div variants={megaMenuColumn}>
                     <Link
                       href="/fund"
@@ -343,35 +413,24 @@ export const Navbar = () => {
                       The Fund
                     </Link>
                     <div className="flex flex-col gap-4">
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/fund#overview"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Overview
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/fund#strategy"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Investment Strategy
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/fund#impact"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Impact & SDGs
-                        </Link>
-                      </motion.div>
+                      {[
+                        { href: "/fund#overview", label: "Overview" },
+                        { href: "/fund#strategy", label: "Investment Strategy" },
+                        { href: "/fund#impact", label: "Impact & SDGs" },
+                      ].map((item) => (
+                        <motion.div variants={megaMenuItem} key={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={closeMegaMenu}
+                            className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
                     </div>
                   </motion.div>
+
                   <motion.div variants={megaMenuColumn}>
                     <Link
                       href="/governance"
@@ -381,30 +440,27 @@ export const Navbar = () => {
                       Leadership
                     </Link>
                     <div className="flex flex-col gap-4">
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/governance#board"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Board of Directors
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/governance"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Governance
-                        </Link>
-                      </motion.div>
+                      {[
+                        { href: "/governance#board", label: "Board of Directors" },
+                        { href: "/governance", label: "Governance" },
+                      ].map((item) => (
+                        <motion.div variants={megaMenuItem} key={item.href}>
+                          <Link
+                            href={item.href}
+                            onClick={closeMegaMenu}
+                            className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
                     </div>
                   </motion.div>
                 </div>
+
                 <motion.div
                   variants={megaMenuCard}
-                  className="relative overflow-hidden rounded-xl group/prospectus cursor-pointer border border-gray-100 flex-shrink-0"
+                  className="relative overflow-hidden rounded-lg group/prospectus cursor-pointer border border-gray-100 flex-shrink-0"
                 >
                   <div className="absolute inset-0 bg-gray-900">
                     <img
@@ -420,8 +476,7 @@ export const Navbar = () => {
                       Download Prospectus
                     </h4>
                     <p className="text-sm text-white/80 mb-6 line-clamp-2">
-                      Get comprehensive details about our fund strategy and
-                      performance.
+                      Get comprehensive details about our fund strategy and performance.
                     </p>
                     <button className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors flex items-center w-fit gap-2">
                       <Download className="w-4 h-4" /> Download PDF
@@ -431,6 +486,7 @@ export const Navbar = () => {
               </div>
             )}
 
+            {/* Portfolio */}
             {activeMegaMenu === "portfolio" && (
               <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-4 gap-12 text-left">
                 <div className="col-span-1 lg:col-span-1 border-r border-gray-100 pr-8">
@@ -439,72 +495,52 @@ export const Navbar = () => {
                       SDG Impact Highlights
                     </h4>
                     <div className="flex flex-col gap-4">
-                      <motion.div
-                        variants={megaMenuItem}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-8 h-8 rounded-md bg-[#FCC30B] flex items-center justify-center flex-shrink-0">
-                          <span className="text-white font-bold text-xs">
-                            7
-                          </span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">
-                          Affordable & Clean Energy
-                        </span>
-                      </motion.div>
-                      <motion.div
-                        variants={megaMenuItem}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-8 h-8 rounded-md bg-[#3F7E44] flex items-center justify-center flex-shrink-0">
-                          <span className="text-white font-bold text-xs">
-                            13
-                          </span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">
-                          Climate Action
-                        </span>
-                      </motion.div>
-                      <motion.div
-                        variants={megaMenuItem}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-8 h-8 rounded-md bg-[#A21942] flex items-center justify-center flex-shrink-0">
-                          <span className="text-white font-bold text-xs">
-                            8
-                          </span>
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">
-                          Decent Work & Growth
-                        </span>
-                      </motion.div>
+                      {[
+                        { num: "7", color: "#FCC30B", label: "Affordable & Clean Energy" },
+                        { num: "13", color: "#3F7E44", label: "Climate Action" },
+                        { num: "8", color: "#A21942", label: "Decent Work & Growth" },
+                      ].map((sdg) => (
+                        <motion.div
+                          variants={megaMenuItem}
+                          key={sdg.num}
+                          className="flex items-center gap-3"
+                        >
+                          <div
+                            className="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0"
+                            style={{ backgroundColor: sdg.color }}
+                          >
+                            <span className="text-white font-bold text-xs">{sdg.num}</span>
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">{sdg.label}</span>
+                        </motion.div>
+                      ))}
                       <motion.div variants={megaMenuItem} className="mt-4">
                         <Link
                           href="/portfolio"
                           onClick={closeMegaMenu}
                           className="text-xs font-bold uppercase tracking-wider text-[var(--color-accent)] hover:text-[var(--color-accent-green)] transition-colors flex items-center gap-1"
                         >
-                          View Impact Stories{" "}
-                          <ArrowUpRight className="w-3 h-3" />
+                          View Impact Stories <ArrowUpRight className="w-3 h-3" />
                         </Link>
                       </motion.div>
                     </div>
                   </motion.div>
                 </div>
+
                 <div className="col-span-1 lg:col-span-3">
                   <motion.div variants={megaMenuColumn}>
                     <h4 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-6">
                       Latest Projects
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      {portfolioData.slice(0, 3).map((project, i) => (
+                      {portfolioData.slice(0, 3).map((project) => (
                         <motion.div variants={megaMenuItem} key={project.id}>
                           <Link
                             href={`/portfolio/${project.id}`}
                             onClick={closeMegaMenu}
                             className="group/project block"
                           >
-                            <div className="h-32 mb-4 overflow-hidden rounded-lg">
+                            <div className="h-32 mb-4 overflow-hidden rounded-sm">
                               <img
                                 src={project.image}
                                 alt={project.name}
@@ -527,6 +563,7 @@ export const Navbar = () => {
               </div>
             )}
 
+            {/* News / Media Center */}
             {activeMegaMenu === "news" && (
               <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
                 <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -535,81 +572,58 @@ export const Navbar = () => {
                       News & Media
                     </h4>
                     <div className="flex flex-col gap-4">
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/news"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          All News
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/resources#press"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Press Releases
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/news"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          In the Media
-                        </Link>
-                      </motion.div>
+                      {[
+                        { href: "/news", label: "All News" },
+                        { href: "/resources#press", label: "Press Releases" },
+                        { href: "/news", label: "In the Media" },
+                      ].map((item) => (
+                        <motion.div variants={megaMenuItem} key={item.label}>
+                          <Link
+                            href={item.href}
+                            onClick={closeMegaMenu}
+                            className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
                     </div>
                   </motion.div>
+
                   <motion.div variants={megaMenuColumn}>
                     <h4 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-6">
                       Resources
                     </h4>
                     <div className="flex flex-col gap-4">
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/resources#financial-reports"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Annual Reports
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/resources#esg-framework"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          ESG Framework
-                        </Link>
-                      </motion.div>
-                      <motion.div variants={megaMenuItem}>
-                        <Link
-                          href="/resources#corporate-governance"
-                          onClick={closeMegaMenu}
-                          className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
-                        >
-                          Corporate Governance
-                        </Link>
-                      </motion.div>
+                      {[
+                        { href: "/resources#financial-reports", label: "Annual Reports" },
+                        { href: "/resources#esg-framework", label: "ESG Framework" },
+                        { href: "/resources#corporate-governance", label: "Corporate Governance" },
+                      ].map((item) => (
+                        <motion.div variants={megaMenuItem} key={item.label}>
+                          <Link
+                            href={item.href}
+                            onClick={closeMegaMenu}
+                            className="text-sm font-medium text-gray-600 hover:text-[var(--color-accent-green)] transition-colors"
+                          >
+                            {item.label}
+                          </Link>
+                        </motion.div>
+                      ))}
                     </div>
                   </motion.div>
                 </div>
+
                 <motion.div
                   variants={megaMenuCard}
-                  className="bg-gray-50 p-6 rounded-xl border border-gray-100 h-full flex flex-col justify-center"
+                  className="bg-gray-50 p-6 rounded-sm border border-gray-100 h-full flex flex-col justify-center"
                 >
                   <h4 className="text-xs font-bold tracking-widest uppercase text-[var(--color-accent-green)] mb-4">
                     Latest Update
                   </h4>
                   <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    The Clean Energy Local Currency Fund successfully closes its
-                    Series 2 capital raise, securing ₦15 Billion from domestic
-                    institutional investors.
+                    The Clean Energy Local Currency Fund successfully closes its Series 2
+                    capital raise, securing ₦15 Billion from domestic institutional investors.
                   </p>
                   <a
                     href="#"
@@ -624,91 +638,81 @@ export const Navbar = () => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu */}
-      <div
-        className={cn(
-          "fixed inset-0 bg-[var(--color-background)] z-40 flex flex-col items-center justify-start pt-24 pb-8 overflow-y-auto gap-6 transition-transform duration-500 md:hidden",
-          mobileMenuOpen ? "translate-y-0" : "-translate-y-full",
-        )}
-      >
-        <Link
-          href="/about"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          About
-        </Link>
-        <Link
-          href="/portfolio"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Portfolio
-        </Link>
-        <Link
-          href="/impact"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Impact
-        </Link>
-        <Link
-          href="/investor-relations"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Investor Relations
-        </Link>
-        <Link
-          href="/eligibility"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Eligibility Criteria
-        </Link>
-        <div className="flex flex-col items-center gap-4">
-          <span className="text-2xl font-medium tracking-widest uppercase text-white/50">
-            News & Resources
-          </span>
-          <Link
-            href="/news"
-            className="text-lg font-medium text-white/80 hover:text-white transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
+      {/* ── Mobile Menu — FIX 4: AnimatePresence for proper enter/exit animation ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 bg-[var(--color-background)] z-40 flex flex-col items-center justify-start pt-24 pb-8 overflow-y-auto gap-6 lg:hidden"
           >
-            All News
-          </Link>
-          <Link
-            href="/resources"
-            className="text-lg font-medium text-white/80 hover:text-white transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Resources
-          </Link>
-        </div>
-        <Link
-          href="/contact"
-          className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Contact
-        </Link>
-        <div className="flex items-center gap-6 mt-4">
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              setIsSearchOpen(true);
-            }}
-            className="text-white bg-white/10 p-3 rounded-none border border-white hover:bg-white/20 transition-colors"
-          >
-            <Search className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2 px-6 py-3 bg-electric-blue text-black border-2 border-black rounded-none font-bold shadow-[4px_4px_0_0_#ffffff]">
-            <Lock className="w-4 h-4" /> Login
-          </div>
-        </div>
-      </div>
+            {[
+              { href: "/about", label: "About" },
+              { href: "/portfolio", label: "Portfolio" },
+              { href: "/impact", label: "Impact" },
+              { href: "/investor-relations", label: "Investor Relations" },
+              { href: "/eligibility", label: "Eligibility Criteria" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
 
-      {/* Global Search Overlay */}
+            <div className="flex flex-col items-center gap-4">
+              <span className="text-2xl font-medium tracking-widest uppercase text-white/50">
+                News & Resources
+              </span>
+              <Link
+                href="/news"
+                className="text-lg font-medium text-white/80 hover:text-white transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                All News
+              </Link>
+              <Link
+                href="/resources"
+                className="text-lg font-medium text-white/80 hover:text-white transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Resources
+              </Link>
+            </div>
+
+            <Link
+              href="/contact"
+              className="text-2xl font-medium tracking-widest uppercase text-white hover:text-[var(--color-accent-green)] transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
+
+            <div className="flex items-center gap-6 mt-4">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsSearchOpen(true);
+                }}
+                className="text-white bg-white/10 p-3 border border-white hover:bg-white/20 transition-colors"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+              {/* FIX 5: bg-electric-blue now resolves from --color-electric-blue token */}
+              <button className="flex items-center gap-2 px-6 py-3 bg-electric-blue text-black border-2 border-black font-bold shadow-[4px_4px_0_0_#ffffff]">
+                <Lock className="w-4 h-4" /> Login
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Global Search Overlay ──────────────────────────────────────────── */}
       <AnimatePresence>
         {isSearchOpen && (
           <motion.div
@@ -723,6 +727,7 @@ export const Navbar = () => {
             >
               <X className="w-8 h-8 stroke-[1.5]" />
             </button>
+
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -737,11 +742,11 @@ export const Navbar = () => {
                 placeholder="Search projects, sectors, or categories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 text-white text-xl md:text-2xl placeholder:text-white/30 rounded-2xl py-5 pl-16 pr-8 focus:outline-none focus:border-white/30 transition-colors shadow-2xl"
+                className="w-full bg-white/5 border border-white/10 text-white text-xl md:text-2xl placeholder:text-white/30 rounded-sm py-5 pl-16 pr-8 focus:outline-none focus:border-white/30 transition-colors shadow-2xl"
               />
 
               {searchQuery && (
-                <div className="mt-8 bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="mt-8 bg-white/5 border border-white/10 rounded-sm overflow-hidden shadow-2xl">
                   {searchResults.length > 0 ? (
                     <div className="flex flex-col">
                       {searchResults.map((result) => (
@@ -751,12 +756,20 @@ export const Navbar = () => {
                           onClick={() => setIsSearchOpen(false)}
                           className="flex items-center gap-4 p-4 border-b border-white/5 hover:bg-white/10 transition-colors group last:border-b-0"
                         >
-                          <div className="w-12 h-12 rounded-lg bg-white/10 overflow-hidden flex-shrink-0">
-                            <img src={result.image} alt={result.name} className="w-full h-full object-cover" />
+                          <div className="w-12 h-12 rounded-sm bg-white/10 overflow-hidden flex-shrink-0">
+                            <img
+                              src={result.image}
+                              alt={result.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           <div className="flex-1 text-left">
-                            <h4 className="text-white font-medium group-hover:text-[var(--color-accent-green)] transition-colors">{result.name}</h4>
-                            <p className="text-white/50 text-xs tracking-widest uppercase">{result.sector}</p>
+                            <h4 className="text-white font-medium group-hover:text-[var(--color-accent-green)] transition-colors">
+                              {result.name}
+                            </h4>
+                            <p className="text-white/50 text-xs tracking-widest uppercase">
+                              {result.sector}
+                            </p>
                           </div>
                           <div className="text-white/30 group-hover:text-[var(--color-accent-green)] transition-colors">
                             <ArrowUpRight className="w-5 h-5 mx-2" />
@@ -779,6 +792,8 @@ export const Navbar = () => {
   );
 };
 
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
 export const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -790,38 +805,15 @@ export const Hero = () => {
       link: "Read Announcement",
       isMetric: false,
     },
-    {
-      label: "Total Dividends Paid",
-      value: "₦730M",
-      link: "Across two distributions",
-      isMetric: true,
-    },
-    {
-      label: "Series 1 Investors",
-      value: "8",
-      link: "100% Subscribed",
-      isMetric: true,
-    },
-    {
-      label: "Fund Rating",
-      value: "BBB(IM)",
-      link: "Investment Grade / Stable",
-      isMetric: true,
-    },
-    {
-      label: "Green Certification",
-      value: "Active",
-      link: "Climate Bonds Initiative",
-      isMetric: true,
-    },
+    { label: "Total Dividends Paid", value: "₦730M", link: "Across two distributions", isMetric: true },
+    { label: "Series 1 Investors", value: "8", link: "100% Subscribed", isMetric: true },
+    { label: "Fund Rating", value: "BBB(IM)", link: "Investment Grade / Stable", isMetric: true },
+    { label: "Green Certification", value: "Active", link: "Climate Bonds Initiative", isMetric: true },
   ];
 
-  // Ensure video plays
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current
-        .play()
-        .catch((e) => console.log("Autoplay prevented:", e));
+      videoRef.current.play().catch((e) => console.log("Autoplay prevented:", e));
     }
   }, []);
 
@@ -832,18 +824,15 @@ export const Hero = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Scroll animations for exit
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 600], [1, 0.25]);
   const heroY = useTransform(scrollY, [0, 600], [0, 100]);
 
   return (
     <section className="relative h-[100dvh] min-h-[600px] lg:min-h-[800px] flex flex-col justify-end pb-16 overflow-hidden bg-obsidian text-white">
-      {/* Video Background Layer */}
-      <motion.div
-        style={{ opacity: 1 }}
-        className="absolute inset-0 z-0 bg-obsidian"
-      >
+
+      {/* Video Background */}
+      <motion.div style={{ opacity: 1 }} className="absolute inset-0 z-0 bg-obsidian">
         <video
           ref={videoRef}
           autoPlay
@@ -853,19 +842,15 @@ export const Hero = () => {
           poster="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2672&auto=format&fit=crop"
           className="absolute inset-0 w-full h-full object-cover -z-10"
         >
-          <source
-            src="https://nolimitlms.com/wp-content/uploads/2026/04/solar_p.mp4"
-            type="video/mp4"
-          />
+          <source src="https://nolimitlms.com/wp-content/uploads/2026/04/solar_p.mp4" type="video/mp4" />
         </video>
-
-        {/* Flat dark overlay to guarantee text readability across the whole video */}
         <div className="absolute inset-0 bg-[#050A15]/80 z-10" />
       </motion.div>
 
+      {/* FIX 6: Replaced max-w-7xl mx-auto px-6 with container-responsive */}
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
-        className="relative z-20 w-full max-w-7xl mx-auto px-6 flex flex-col lg:flex-row justify-between items-end gap-12 mb-12"
+        className="relative z-20 w-full container-responsive flex flex-col xl:flex-row justify-between xl:items-center items-start gap-12 mb-12"
       >
         {/* Left Content */}
         <motion.div
@@ -874,9 +859,10 @@ export const Hero = () => {
           variants={staggerContainer}
           className="max-w-3xl"
         >
+          {/* FIX 7: Replaced raw responsive font classes with text-display utility */}
           <motion.h1
             variants={fadeUp}
-            className="text-4xl sm:text-4xl md:text-5xl lg:text-7xl font-medium leading-[1.1] tracking-tight text-white mb-6"
+            className="text-display font-medium text-white mb-6"
           >
             Powering a <br className="hidden md:block" />
             Resilient Future
@@ -884,7 +870,7 @@ export const Hero = () => {
 
           <motion.p
             variants={fadeUp}
-            className="text-lg md:text-xl text-white/80 max-w-xl mb-10 leading-relaxed font-light"
+            className="text-body text-white/80 max-w-xl mb-10 leading-relaxed font-light md:text-xl"
           >
             Providing local currency funding to climate-aligned, sustainable,
             and inclusive clean energy infrastructure across Nigeria.
@@ -897,14 +883,14 @@ export const Hero = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white text-black font-bold px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 shadow-lg hover:bg-[var(--color-accent-green)] hover:text-white"
+              className="bg-white text-black font-bold px-8 py-4 rounded-sm text-sm transition-colors flex items-center justify-center gap-2 shadow-lg hover:bg-[var(--color-accent-green)] hover:text-white"
             >
               Explore Funding Options <ArrowUpRight className="w-4 h-4" />
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.02, color: "rgba(255, 255, 255, 1)" }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-transparent text-white px-8 py-4 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+              className="bg-transparent text-white px-8 py-4 rounded-sm text-sm font-medium transition-colors flex items-center justify-center gap-2 hover:text-white/80"
             >
               View Investor Relations <ArrowUpRight className="w-4 h-4" />
             </motion.button>
@@ -912,11 +898,12 @@ export const Hero = () => {
         </motion.div>
 
         {/* Right Floating Panel */}
+        {/* FIX 8: w-full on mobile, constrained on sm+ — prevents overflow on small screens */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="w-[300px] xl:w-80 h-[160px] bg-obsidian/30 backdrop-blur-sm border border-white/20 border-l-2 border-l-electric-blue relative rounded-lg"
+          className="w-full sm:w-[300px] xl:w-80 h-[160px] bg-obsidian/30 backdrop-blur-sm border border-white/20 border-l-2 border-l-electric-blue relative rounded-sm mt-8 xl:mt-0"
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -936,9 +923,7 @@ export const Hero = () => {
                 <p
                   className={cn(
                     "text-white font-medium leading-relaxed mb-4",
-                    slides[currentSlide].isMetric
-                      ? "text-4xl font-light"
-                      : "text-sm",
+                    slides[currentSlide].isMetric ? "text-4xl font-light" : "text-sm",
                   )}
                 >
                   {slides[currentSlide].value}
@@ -949,8 +934,7 @@ export const Hero = () => {
                   href="#"
                   className="text-xs font-medium text-white flex items-center gap-1 hover:opacity-80 transition-opacity"
                 >
-                  {slides[currentSlide].link}{" "}
-                  <ArrowUpRight className="w-3 h-3" />
+                  {slides[currentSlide].link} <ArrowUpRight className="w-3 h-3" />
                 </a>
               ) : (
                 <span className="text-xs font-medium text-white/60 uppercase tracking-wider">
@@ -960,7 +944,7 @@ export const Hero = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Progress indicators */}
+          {/* Progress bar */}
           <div className="absolute bottom-0 left-0 h-[2px] bg-white/10 w-full">
             <motion.div
               key={currentSlide + "-progress"}
@@ -973,21 +957,24 @@ export const Hero = () => {
         </motion.div>
       </motion.div>
 
-      {/* Bottom Utility Row */}
+      {/* Bottom Row */}
+      {/* FIX 9: container-responsive replaces max-w-7xl mx-auto px-6 */}
       <motion.div
         style={{ opacity: heroOpacity }}
-        className="relative z-20 w-full max-w-7xl mx-auto px-6 border-t border-white/20 pt-6 flex justify-between items-center"
+        className="relative z-20 w-full container-responsive border-t border-white/20 pt-6 flex justify-between items-center"
       >
         <div className="text-[10px] md:text-xs font-medium tracking-widest uppercase text-white/60">
           Nigeria's First Certified Green Fund
         </div>
-        <div className="text-[10px] md:text-xs font-medium tracking-widest uppercase text-white/60 flex items-center gap-2">
+        <div className="text-[10px] md:text-xs font-medium tracking-widest uppercase text-white/60">
           Scroll to Explore
         </div>
       </motion.div>
     </section>
   );
 };
+
+// ─── ImpactStats ──────────────────────────────────────────────────────────────
 
 export const ImpactStats = () => {
   const stats = [
@@ -998,8 +985,9 @@ export const ImpactStats = () => {
   ];
 
   return (
-    <section className="py-24 bg-[var(--color-surface)] relative z-20 border-y border-[var(--color-border)]">
-      <div className="max-w-7xl mx-auto px-6">
+    // FIX 10: section-padding replaces py-24; container-responsive replaces max-w-7xl mx-auto px-6
+    <section className="section-padding bg-[var(--color-surface)] relative z-20 border-y border-[var(--color-border)]">
+      <div className="container-responsive">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -1011,12 +999,14 @@ export const ImpactStats = () => {
               Fund Impact
             </span>
           </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
               <motion.div
                 key={i}
                 variants={fadeUp}
-                className="p-8 rounded-3xl border border-[var(--color-border)] bg-[var(--color-background)] hover:border-[var(--color-border-light)] transition-colors text-center"
+                // FIX 11: rounded-3xl replaced with rounded-sm — consistent with flat design system
+                className="p-8 rounded-sm border border-[var(--color-border)] bg-[var(--color-background)] hover:border-[var(--color-border-light)] transition-colors text-center"
               >
                 <div className="text-4xl lg:text-5xl font-light text-white mb-4">
                   {stat.value}
@@ -1033,46 +1023,45 @@ export const ImpactStats = () => {
   );
 };
 
+// ─── About ────────────────────────────────────────────────────────────────────
+
 export const About = () => {
   return (
-    <section className="py-24 bg-[#F4F4F6] text-[#1A1A1A] relative z-20">
-      <div className="max-w-7xl mx-auto px-6">
+    // FIX 12: section-padding replaces py-24; bg-surface-light replaces hardcoded #F4F4F6
+    <section className="section-padding bg-[var(--color-surface-light)] text-[#1A1A1A] relative z-20">
+      {/* FIX 13: container-responsive replaces max-w-7xl mx-auto px-6 */}
+      <div className="container-responsive">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, margin: "-100px" }}
           variants={staggerContainer}
         >
-          {/* Eyebrow */}
           <motion.div variants={fadeUp} className="mb-8">
             <span className="text-xs font-medium uppercase tracking-[0.2em] text-[#1A1A1A]/60">
               About the Fund
             </span>
           </motion.div>
 
-          {/* Headline */}
+          {/* FIX 14: text-heading replaces manual responsive text sizing */}
           <motion.h2
             variants={fadeUp}
-            className="text-2xl md:text-3xl lg:text-4xl font-light leading-tight mb-16 max-w-4xl"
+            className="text-heading font-light leading-tight mb-16 max-w-4xl"
           >
             A specialized alternative asset vehicle providing long-term, Clean
             Energy local currency financing to sustainable infrastructure
             projects across Nigeria.
           </motion.h2>
 
-          {/* Divider */}
           <motion.div
             variants={fadeUp}
             className="w-full h-[1px] bg-[#1A1A1A]/10 mb-16"
           />
 
-          {/* 3-Column Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
-            {/* Column 1: Context & CTA */}
-            <motion.div
-              variants={fadeUp}
-              className="flex flex-col justify-between h-full"
-            >
+
+            {/* Column 1 */}
+            <motion.div variants={fadeUp} className="flex flex-col justify-between h-full">
               <div>
                 <h3 className="text-sm font-medium uppercase tracking-wider text-black/50 mb-6">
                   Strategic Mandate
@@ -1085,17 +1074,18 @@ export const About = () => {
                   clean energy transition.
                 </p>
               </div>
+              {/* FIX 15: bg-electric-blue now resolves from token */}
               <button className="bg-electric-blue text-black border-2 border-black hover:bg-black hover:text-white px-8 py-4 rounded-none text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-[4px_4px_0_0_#000000] w-fit">
                 Discover the Fund <ArrowUpRight className="w-4 h-4" />
               </button>
             </motion.div>
 
-            {/* Column 2: Image Card */}
+            {/* Column 2 */}
             <motion.div
               variants={fadeUp}
               className="bg-white rounded-none border-2 border-black p-6 flex flex-col shadow-[4px_4px_0_0_#000000]"
             >
-              <div className="h-48 rounded-none border-2 border-black overflow-hidden mb-6 relative">
+              <div className="h-48 rounded-none border-2 border-black overflow-hidden mb-6">
                 <img
                   src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop"
                   alt="Local Currency"
@@ -1110,7 +1100,7 @@ export const About = () => {
               </p>
             </motion.div>
 
-            {/* Column 3: Mixed Cards */}
+            {/* Column 3 */}
             <motion.div variants={fadeUp} className="flex flex-col gap-6">
               <div className="bg-white rounded-none border-2 border-black p-8 flex-1 shadow-[4px_4px_0_0_#000000] flex flex-col justify-center">
                 <div className="w-12 h-12 rounded-none border-2 border-black bg-electric-blue flex items-center justify-center mb-6">
@@ -1122,14 +1112,13 @@ export const About = () => {
                   mobilize institutional capital.
                 </p>
               </div>
+              {/* FIX 16: bg-obsidian now resolves from token; border-electric-blue from token */}
               <div className="bg-obsidian text-white rounded-none border-2 border-electric-blue p-8 flex-1 shadow-[4px_4px_0_0_#00f0ff] flex flex-col justify-center relative overflow-hidden">
                 <h4 className="text-sm font-medium text-electric-blue uppercase tracking-wider mb-2">
                   Status
                 </h4>
                 <div className="text-3xl font-bold mb-2">Certified Green</div>
-                <p className="text-white/80 text-sm">
-                  Climate Bonds Initiative
-                </p>
+                <p className="text-white/80 text-sm">Climate Bonds Initiative</p>
               </div>
             </motion.div>
           </div>
@@ -1138,20 +1127,3 @@ export const About = () => {
     </section>
   );
 };
-
-import { Footer } from "./Footer";
-
-
-import { CaseStudy } from "./CaseStudy";
-import PortfolioArchive from "./PortfolioArchive";
-
-import { ArticlePage } from "./ArticlePage";
-import { NewsPage } from "../views/NewsPage";
-import { GovernancePage } from "../views/GovernancePage";
-import { InvestorRelationsPage } from "../views/InvestorRelationsPage";
-import { FundPage } from "../views/FundPage";
-import { ImpactPage } from "../views/ImpactPage";
-import { EligibilityPage } from "../views/EligibilityPage";
-import { ContactPage } from "../views/ContactPage";
-import { ResourcesPage } from "../views/ResourcesPage";
-

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Building2, Globe, ArrowUpRight, Linkedin, Youtube, Instagram, Lightbulb, X } from 'lucide-react';
+import { TrendingUp, Building2, Globe, ArrowUpRight, Linkedin, Youtube, Instagram, X } from 'lucide-react';
 import { usePathname } from "next/navigation";
 
 const partners = [
